@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-//test
+//test2
 public class Student
 {
     public int StudentID { get; }
