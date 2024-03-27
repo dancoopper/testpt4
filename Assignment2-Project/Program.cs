@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public class Student
 {
     public int StudentID { get; }
@@ -69,6 +65,7 @@ public class CollegeManagementSystem
 
     public void AddStudent(int id, string name)
     {
+        Console.Clear();
         try
         {
             var student = new Student(id, name);
@@ -83,6 +80,7 @@ public class CollegeManagementSystem
 
     public void AddProfessor(int id, string name)
     {
+        Console.Clear();
         try
         {
             var professor = new Professor(id, name);
@@ -97,6 +95,7 @@ public class CollegeManagementSystem
 
     public void EnrollStudentInClass(int studentID, string className)
     {
+        Console.Clear();
         Student student = students.Find(s => s.StudentID == studentID);
         if (student == null)
         {
@@ -117,6 +116,7 @@ public class CollegeManagementSystem
 
     public void ViewStudentsInClass(string className)
     {
+        Console.Clear();
         Console.WriteLine($"Students enrolled in {className}:");
         bool found = false;
 
@@ -137,6 +137,7 @@ public class CollegeManagementSystem
 
     public void ViewAllStudents()
     {
+        Console.Clear();
         Console.WriteLine("***** Students *****");
 
         if (students.Count == 0)
@@ -154,6 +155,7 @@ public class CollegeManagementSystem
 
     public void ViewAllProfessors()
     {
+        Console.Clear();
         Console.WriteLine("***** Professors *****");
 
         if (professors.Count == 0)
@@ -184,12 +186,12 @@ public class CollegeManagementSystem
 
         if (confirmRemove != 'Y')
         {
-            Console.WriteLine("Student removal canceled.");
+            Console.WriteLine("\nStudent removal canceled.");
             return;
         }
 
         students.Remove(student);
-        Console.WriteLine("Student removed successfully.");
+        Console.WriteLine("\nStudent removed successfully.");
     }
 
     public void RemoveProfessor(int professorID)
@@ -221,11 +223,11 @@ class Program
     static void Main(string[] args)
     {
         CollegeManagementSystem cms = new CollegeManagementSystem();
-        int choice;
+        int choice = 0;
 
         do
         {
-            //Console.Clear();
+            
 
             Console.WriteLine("Menu:");
             Console.WriteLine("1. Add a new student");
@@ -238,8 +240,16 @@ class Program
             Console.WriteLine("8. View students in a class");
             Console.WriteLine("9. Exit the program");
             Console.Write("Enter your choice: ");
+            try { 
+                choice = Convert.ToInt32(Console.ReadLine());
+            }
+            catch (FormatException) 
+            {
+                choice = 0;
+                Console.Clear();
+                Console.WriteLine("Invalid input. Please enter a valid number.");
+            }
 
-            choice = Convert.ToInt32(Console.ReadLine());
 
             try
             {
@@ -250,14 +260,15 @@ class Program
                         int studentID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter student name: ");
                         string studentName = Console.ReadLine();
-                        cms.AddStudent(studentID, studentName);
+                        
+                        cms.AddStudent(studentID, studentName.ToLower());
                         break;
                     case 2:
                         Console.Write("Enter professor ID: ");
                         int professorID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter professor name: ");
                         string professorName = Console.ReadLine();
-                        cms.AddProfessor(professorID, professorName);
+                        cms.AddProfessor(professorID, professorName.ToLower());
                         break;
                     case 3:
                         Console.Write("Enter student ID to remove: ");
@@ -301,13 +312,25 @@ class Program
                         }
                         break;
                     default:
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        //Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
             }
+
+            catch (FormatException)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input. Please enter a valid number.");
+            }
+            catch (IOException ex)
+            {
+                Console.Clear();
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                Console.Clear();
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
 
         } while (choice != 9);
