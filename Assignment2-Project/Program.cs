@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 public class Student
 {
     public int StudentID { get; }
@@ -83,7 +79,7 @@ public class Professor
 
 public class CollegeManagementSystem
 {
-    private  Student[,] students;
+    private Student[,] students;
     private Professor[,] professors;
     private int studentCount;
     private int professorCount;
@@ -116,6 +112,10 @@ public class CollegeManagementSystem
         {
             Console.WriteLine($"Error adding student: {ex.Message}");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
     }
 
     public void AddProfessor(int id, string name)
@@ -138,6 +138,10 @@ public class CollegeManagementSystem
         {
             Console.WriteLine($"Error adding professor: {ex.Message}");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
     }
 
     public void EnrollProfessorInClass(int professorID, string className)
@@ -157,6 +161,10 @@ public class CollegeManagementSystem
                 {
                     Console.WriteLine($"Error enrolling professor: {ex.Message}");
                     return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred: " + ex.Message);
                 }
             }
         }
@@ -180,6 +188,10 @@ public class CollegeManagementSystem
                 {
                     Console.WriteLine($"Error enrolling student: {ex.Message}");
                     return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred: " + ex.Message);
                 }
             }
         }
@@ -233,7 +245,7 @@ public class CollegeManagementSystem
             }
         }
     }
-    
+
 
     public void ViewStudentsInClass(string className)
     {
@@ -272,7 +284,7 @@ public class CollegeManagementSystem
         {
             for (int i = 0; i < studentCount; i++)
             {
-                //Console.WriteLine($"ID: {students[i, 0].StudentID}, Name: {students[i, 0].Name}");
+
                 Console.WriteLine($"{students[i, 0].ToString()}");
             }
         }
@@ -344,9 +356,9 @@ public class CollegeManagementSystem
         Console.WriteLine("Professor not found.");
     }
 
-    public void CheckStudent(int studentID, string studentName)
+    public void CheckStudent(int studentID, string studentName) // checks if student exists, if not, adds student
     {
-        
+
         for (int i = 0; i < studentCount; i++)
         {
             if (students[i, 0].StudentID == studentID)
@@ -355,14 +367,14 @@ public class CollegeManagementSystem
                 Console.WriteLine("Student found.");
                 return;
             }
-            
+
         }
         this.AddStudent(studentID, studentName);
     }
 
-    public void CheckProfessor(int professorID, string professorName)
+    public void CheckProfessor(int professorID, string professorName) // checks if professor exists, if not, adds professor
     {
-        
+
         for (int i = 0; i < professorCount; i++)
         {
             if (professors[i, 0].ProfessorID == professorID)
@@ -371,38 +383,43 @@ public class CollegeManagementSystem
                 Console.WriteLine("Professor found.");
                 return;
             }
-            
+
         }
         this.AddProfessor(professorID, professorName);
     }
 
-    public bool ConfirmExit()
+    public bool ConfirmExit() // makes code more readable and easier to understand
     {
         Console.WriteLine("Are you sure you want to exit? (Y/N)");
-        try { 
+        try
+        {
             string confirmExit = Console.ReadLine();
             confirmExit = confirmExit.ToUpper();
             if (confirmExit == "Y")
             {
                 Console.WriteLine("Exiting program...");
-                
+
                 Environment.Exit(0);
             }
             else if (confirmExit == "N")
             {
                 Console.Clear();
                 Console.WriteLine("Continuing...");
-                
+
             }
-            
+
         }
         catch (IOException ex)
         {
             Console.WriteLine("An error occurred: " + ex.Message);
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
         return false;
     }
-  
+
 }
 
 class Program
@@ -416,28 +433,35 @@ class Program
         {
             Console.WriteLine("\n***** College Management System *****");
             Console.WriteLine("Menu:");
-            Console.WriteLine("1. Add a new student");
-            Console.WriteLine("2. Add a new professor");
-            Console.WriteLine("3. Remove a student");
-            Console.WriteLine("4. Remove a professor");
-            Console.WriteLine("5. View all students");
-            Console.WriteLine("6. View all professors");
-            Console.WriteLine("7. Enroll a student in a class");
-            Console.WriteLine("8. Enroll a professor in a class");
-            Console.WriteLine("9. View students in a class");
+            Console.WriteLine("1.  Add a new student");
+            Console.WriteLine("2.  Add a new professor");
+            Console.WriteLine("3.  Remove a student");
+            Console.WriteLine("4.  Remove a professor");
+            Console.WriteLine("5.  View all students");
+            Console.WriteLine("6.  View all professors");
+            Console.WriteLine("7.  Enroll a student in a class");
+            Console.WriteLine("8.  Enroll a professor in a class");
+            Console.WriteLine("9.  View students in a class");
             Console.WriteLine("10. View all classes");
-            Console.WriteLine("0. Exit the program");
+            Console.WriteLine("0.  Exit the program");
             Console.Write("Enter your choice: ");
             try
             {
                 choice = Convert.ToInt32(Console.ReadLine());
+                if (choice < 0 || choice > 10) // QoL improvement
+                {
+                    choice = -2;
+                    Console.Clear();
+                    Console.WriteLine("Invalid choice. Please try again.");
+                }
             }
             catch (FormatException)
             {
-                choice =-2;
+                choice = -2;
                 Console.Clear();
                 Console.WriteLine("Invalid input. Please enter a valid number.");
-            }catch (IOException ex)
+            }
+            catch (IOException ex)
             {
                 choice = -2;
                 Console.Clear();
@@ -445,7 +469,7 @@ class Program
             }
             catch (Exception ex)
             {
-                choice =-2;
+                choice = -2;
                 Console.Clear();
                 Console.WriteLine("An error occurred: " + ex.Message);
             }
@@ -461,7 +485,7 @@ class Program
                         Console.Write("Enter student name: ");
                         string studentName = Console.ReadLine();
                         cms.CheckStudent(studentID, studentName.ToLower());
-                        
+
                         break;
                     case 2:
                         Console.Write("Enter professor ID: ");
@@ -481,8 +505,8 @@ class Program
                         cms.RemoveProfessor(removeProfessorID);
                         break;
                     case 5:
-                       cms.ViewAllStudents();
-                       
+                        cms.ViewAllStudents();
+
                         break;
                     case 6:
                         cms.ViewAllProfessors();
@@ -518,7 +542,7 @@ class Program
                         {
                             continue;
                         }
-                       
+
                         break;
                     default:
                         //Console.WriteLine("Invalid choice. Please try again.");
@@ -531,15 +555,10 @@ class Program
                 Console.Clear();
                 Console.WriteLine("Invalid input. Please enter a valid number.");
             }
-            catch (IOException ex)
-            {
-                Console.Clear();
-                Console.WriteLine("1An error occurred: " + ex.Message);
-            }
             catch (Exception ex)
             {
                 Console.Clear();
-                Console.WriteLine("2An error occurred: " + ex.Message);
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
 
         } while (choice != -1);
