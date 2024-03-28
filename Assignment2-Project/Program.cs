@@ -114,6 +114,33 @@ public class CollegeManagementSystem
         }
     }
 
+    public void ViewAllClasses()
+    {
+        Console.Clear();
+        Console.WriteLine("***** Classes *****");
+
+        List<string> allClasses = new List<string>();
+        foreach (var student in students)
+        {
+            allClasses.AddRange(student.EnrolledClasses);
+        }
+
+        allClasses = allClasses.Distinct().ToList();
+        allClasses.Sort();
+
+        if (allClasses.Count == 0)
+        {
+            Console.WriteLine("No classes found.");
+        }
+        else
+        {
+            foreach (var className in allClasses)
+            {
+                Console.WriteLine(className);
+            }
+        }
+    }
+
     public void ViewStudentsInClass(string className)
     {
         Console.Clear();
@@ -227,8 +254,7 @@ class Program
 
         do
         {
-            
-
+            Console.WriteLine("\n***** College Management System *****");
             Console.WriteLine("Menu:");
             Console.WriteLine("1. Add a new student");
             Console.WriteLine("2. Add a new professor");
@@ -287,6 +313,7 @@ class Program
                         cms.ViewAllProfessors();
                         break;
                     case 7:
+                        cms.ViewAllStudents();
                         Console.Write("Enter student ID: ");
                         int enrollStudentID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter class name to enroll: ");
@@ -294,6 +321,7 @@ class Program
                         cms.EnrollStudentInClass(enrollStudentID, className.ToLower());
                         break;
                     case 8:
+                        cms.ViewAllClasses();
                         Console.Write("Enter class name to view students: ");
                         string classToView = Console.ReadLine();
                         cms.ViewStudentsInClass(classToView.ToLower());
