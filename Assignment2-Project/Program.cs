@@ -437,6 +437,17 @@ class Program
                 choice =-2;
                 Console.Clear();
                 Console.WriteLine("Invalid input. Please enter a valid number.");
+            }catch (IOException ex)
+            {
+                choice = -2;
+                Console.Clear();
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                choice =-2;
+                Console.Clear();
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
 
 
@@ -502,8 +513,6 @@ class Program
                         cms.ViewAllClasses();
                         break;
                     case 0:
-                        //Console.WriteLine("Are you sure you want to exit? (Y/N)");
-                        //char confirmExit = char.ToUpper(Console.ReadKey().KeyChar);
                         bool YN = cms.ConfirmExit();
                         if (YN == false)
                         {
