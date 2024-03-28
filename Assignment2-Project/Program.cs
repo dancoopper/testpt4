@@ -198,6 +198,18 @@ public class CollegeManagementSystem
         }
     }
 
+    public void CheckStudentId(int studentID, string studentName, CollegeManagementSystem obj)
+    {
+        if (students.Exists(s => s.StudentID == studentID))
+        {
+            Console.WriteLine("Student ID already exists.");
+            return;
+        }else 
+        { 
+            obj.AddStudent(studentID, studentName);
+        }
+    }
+
     public void RemoveStudent(int studentID)
     {
         var student = students.Find(s => s.StudentID == studentID);
@@ -286,8 +298,8 @@ class Program
                         int studentID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter student name: ");
                         string studentName = Console.ReadLine();
-                        
-                        cms.AddStudent(studentID, studentName.ToLower());
+                        cms.CheckStudentId(studentID, studentName, cms);
+                        //cms.AddStudent(studentID, studentName.ToLower());
                         break;
                     case 2:
                         Console.Write("Enter professor ID: ");
