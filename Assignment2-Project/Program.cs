@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-//test3
+using System.IO;
+
 public class Student
 {
     public int StudentID { get; }
     public string Name { get; }
-    public List<string> EnrolledClasses { get; }
+    public string[] EnrolledClasses { get; }
 
     public Student(int id, string name)
     {
@@ -16,7 +17,7 @@ public class Student
 
         StudentID = id;
         Name = name;
-        EnrolledClasses = new List<string>();
+        EnrolledClasses = new string[3]; // Assuming each student can enroll in at most 3 classes
     }
 
     public void Enroll(string className)
@@ -24,7 +25,15 @@ public class Student
         if (string.IsNullOrWhiteSpace(className.ToLower()))
             throw new ArgumentException("Class name cannot be null or whitespace.", nameof(className));
 
-        EnrolledClasses.Add(className.ToLower());
+        for (int i = 0; i < EnrolledClasses.Length; i++)
+        {
+            if (EnrolledClasses[i] == null)
+            {
+                EnrolledClasses[i] = className.ToLower();
+                return;
+            }
+        }
+        throw new InvalidOperationException("Student cannot enroll in more classes.");
     }
 }
 
@@ -32,7 +41,7 @@ public class Professor
 {
     public int ProfessorID { get; }
     public string Name { get; }
-    public List<string> TeachesClasses { get; }
+    public string[] TeachesClasses { get; }
 
     public Professor(int id, string name)
     {
@@ -43,7 +52,7 @@ public class Professor
 
         ProfessorID = id;
         Name = name;
-        TeachesClasses = new List<string>();
+        TeachesClasses = new string[3]; // Assuming each professor can teach at most 3 classes
     }
 
     public void AddTeachesClass(string className)
@@ -51,19 +60,31 @@ public class Professor
         if (string.IsNullOrWhiteSpace(className))
             throw new ArgumentException("Class name cannot be null or whitespace.", nameof(className));
 
-        TeachesClasses.Add(className);
+        for (int i = 0; i < TeachesClasses.Length; i++)
+        {
+            if (TeachesClasses[i] == null)
+            {
+                TeachesClasses[i] = className.ToLower();
+                return;
+            }
+        }
+        throw new InvalidOperationException("Professor cannot teach more classes.");
     }
 }
 
 public class CollegeManagementSystem
 {
-    private readonly List<Student> students;
-    private readonly List<Professor> professors;
+    private  Student[,] students;
+    private Professor[,] professors;
+    private int studentCount;
+    private int professorCount;
 
-    public CollegeManagementSystem()
+    public CollegeManagementSystem(int maxStudents, int maxProfessors)
     {
-        students = new List<Student>();
-        professors = new List<Professor>();
+        students = new Student[maxStudents, 3]; // Assuming each student can enroll in at most 3 classes
+        professors = new Professor[maxProfessors, 3]; // Assuming each professor can teach at most 3 classes
+        studentCount = 0;
+        professorCount = 0;
     }
 
     public void AddStudent(int id, string name)
@@ -71,9 +92,16 @@ public class CollegeManagementSystem
         Console.Clear();
         try
         {
-            var student = new Student(id, name);
-            students.Add(student);
-            Console.WriteLine("Student added successfully.");
+            if (studentCount < students.GetLength(0))
+            {
+                students[studentCount, 0] = new Student(id, name);
+                Console.WriteLine("Student added successfully.");
+                studentCount++;
+            }
+            else
+            {
+                Console.WriteLine("Maximum student limit reached.");
+            }
         }
         catch (ArgumentException ex)
         {
@@ -86,9 +114,16 @@ public class CollegeManagementSystem
         Console.Clear();
         try
         {
-            var professor = new Professor(id, name);
-            professors.Add(professor);
-            Console.WriteLine("Professor added successfully.");
+            if (professorCount < professors.GetLength(0))
+            {
+                professors[professorCount, 0] = new Professor(id, name);
+                Console.WriteLine("Professor added successfully.");
+                professorCount++;
+            }
+            else
+            {
+                Console.WriteLine("Maximum professor limit reached.");
+            }
         }
         catch (ArgumentException ex)
         {
@@ -96,53 +131,99 @@ public class CollegeManagementSystem
         }
     }
 
+    public void EnrollProfessorInClass(int professorID, string className)
+    {
+        Console.Clear();
+        for (int i = 0; i < professorCount; i++)
+        {
+            if (professors[i, 0].ProfessorID == professorID)
+            {
+                try
+                {
+                    professors[i, 0].AddTeachesClass(className);
+                    Console.WriteLine("Professor enrolled successfully.");
+                    return;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Error enrolling professor: {ex.Message}");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Professor not found.");
+    }
+
     public void EnrollStudentInClass(int studentID, string className)
     {
         Console.Clear();
-        Student student = students.Find(s => s.StudentID == studentID);
-        if (student == null)
+        for (int i = 0; i < studentCount; i++)
         {
-            Console.WriteLine("Student not found.");
-            return;
+            if (students[i, 0].StudentID == studentID)
+            {
+                try
+                {
+                    students[i, 0].Enroll(className);
+                    Console.WriteLine("Student enrolled successfully.");
+                    return;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Error enrolling student: {ex.Message}");
+                    return;
+                }
+            }
         }
-
-        try
-        {
-            student.Enroll(className);
-            Console.WriteLine("Student enrolled successfully.");
-        }
-        catch (ArgumentException ex)
-        {
-            Console.WriteLine($"Error enrolling student: {ex.Message}");
-        }
+        Console.WriteLine("Student not found.");
     }
 
     public void ViewAllClasses()
     {
         Console.Clear();
         Console.WriteLine("***** Classes *****");
+        List<string> classes = new List<string>();
 
-        List<string> allClasses = new List<string>();
-        foreach (var student in students)
+        for (int i = 0; i < studentCount; i++)
         {
-            allClasses.AddRange(student.EnrolledClasses);
+            for (int j = 0; j < 3; j++)
+            {
+                if (students[i, 0].EnrolledClasses[j] != null)
+                {
+                    if (!classes.Contains(students[i, 0].EnrolledClasses[j]))
+                    {
+                        classes.Add(students[i, 0].EnrolledClasses[j]);
+                    }
+                }
+            }
         }
 
-        allClasses = allClasses.Distinct().ToList();
-        allClasses.Sort();
+        for (int i = 0; i < professorCount; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (professors[i, 0].TeachesClasses[j] != null)
+                {
+                    if (!classes.Contains(professors[i, 0].TeachesClasses[j]))
+                    {
+                        classes.Add(professors[i, 0].TeachesClasses[j]);
+                    }
+                }
+            }
+        }
 
-        if (allClasses.Count == 0)
+        if (classes.Count == 0)
         {
             Console.WriteLine("No classes found.");
         }
         else
         {
-            foreach (var className in allClasses)
+            foreach (var className in classes)
             {
                 Console.WriteLine(className);
             }
         }
     }
+    
 
     public void ViewStudentsInClass(string className)
     {
@@ -150,12 +231,15 @@ public class CollegeManagementSystem
         Console.WriteLine($"Students enrolled in {className}:");
         bool found = false;
 
-        foreach (var student in students)
+        for (int i = 0; i < studentCount; i++)
         {
-            if (student.EnrolledClasses.Contains(className))
+            for (int j = 0; j < 3; j++)
             {
-                Console.WriteLine($"ID: {student.StudentID}, Name: {student.Name}");
-                found = true;
+                if (students[i, 0].EnrolledClasses[j] == className)
+                {
+                    Console.WriteLine($"ID: {students[i, 0].StudentID}, Name: {students[i, 0].Name}");
+                    found = true;
+                }
             }
         }
 
@@ -170,15 +254,15 @@ public class CollegeManagementSystem
         Console.Clear();
         Console.WriteLine("***** Students *****");
 
-        if (students.Count == 0)
+        if (studentCount == 0)
         {
             Console.WriteLine("No students found.");
         }
         else
         {
-            foreach (var student in students)
+            for (int i = 0; i < studentCount; i++)
             {
-                Console.WriteLine($"ID: {student.StudentID}, Name: {student.Name}");
+                Console.WriteLine($"ID: {students[i, 0].StudentID}, Name: {students[i, 0].Name}");
             }
         }
     }
@@ -188,75 +272,98 @@ public class CollegeManagementSystem
         Console.Clear();
         Console.WriteLine("***** Professors *****");
 
-        if (professors.Count == 0)
+        if (professorCount == 0)
         {
             Console.WriteLine("No professors found.");
         }
         else
         {
-            foreach (var professor in professors)
+            for (int i = 0; i < professorCount; i++)
             {
-                Console.WriteLine($"ID: {professor.ProfessorID}, Name: {professor.Name}");
+                Console.WriteLine($"ID: {professors[i, 0].ProfessorID}, Name: {professors[i, 0].Name}");
             }
         }
     }
 
-    public void CheckStudentId(int studentID, string studentName, CollegeManagementSystem obj)
-    {
-        if (students.Exists(s => s.StudentID == studentID))
-        {
-            Console.WriteLine("Student ID already exists.");
-            return;
-        }else 
-        { 
-            obj.AddStudent(studentID, studentName);
-        }
-    }
+
 
     public void RemoveStudent(int studentID)
     {
-        var student = students.Find(s => s.StudentID == studentID);
-        if (student == null)
+        for (int i = 0; i < studentCount; i++)
         {
-            Console.WriteLine("Student not found.");
-            return;
+            if (students[i, 0].StudentID == studentID)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    students[i, 0].EnrolledClasses[j] = null;
+                }
+                for (int k = i; k < studentCount - 1; k++)
+                {
+                    students[k, 0] = students[k + 1, 0];
+                }
+                students[studentCount - 1, 0] = null;
+                studentCount--;
+                Console.WriteLine("Student removed successfully.");
+                return;
+            }
         }
+        Console.WriteLine("Student not found.");
+    }
 
-        Console.WriteLine($"Student ID: {student.StudentID}, Name: {student.Name}");
-        Console.Write("Are you sure you want to remove this student? (Y/N): ");
-        char confirmRemove = char.ToUpper(Console.ReadKey().KeyChar);
-
-        if (confirmRemove != 'Y')
+  
+    public void CheckStudent(int studentID, string studentName)
+    {
+        
+        for (int i = 0; i < studentCount; i++)
         {
-            Console.WriteLine("\nStudent removal canceled.");
-            return;
+            if (students[i, 0].StudentID == studentID)
+            {
+                Console.Clear();
+                Console.WriteLine("Student found.");
+                return;
+            }
+            
         }
+        this.AddStudent(studentID, studentName);
+    }
 
-        students.Remove(student);
-        Console.WriteLine("\nStudent removed successfully.");
+    public void CheckProfessor(int professorID, string professorName)
+    {
+        
+        for (int i = 0; i < professorCount; i++)
+        {
+            if (professors[i, 0].ProfessorID == professorID)
+            {
+                Console.Clear();
+                Console.WriteLine("Professor found.");
+                return;
+            }
+            
+        }
+        this.AddProfessor(professorID, professorName);
     }
 
     public void RemoveProfessor(int professorID)
     {
-        var professor = professors.Find(p => p.ProfessorID == professorID);
-        if (professor == null)
+        for (int i = 0; i < professorCount; i++)
         {
-            Console.WriteLine("Professor not found.");
-            return;
+            if (professors[i, 0].ProfessorID == professorID)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    professors[i, 0].TeachesClasses[j] = null;
+                }
+                for (int k = i; k < professorCount - 1; k++)
+                {
+                    professors[k, 0] = professors[k + 1, 0];
+                }
+                professors[professorCount - 1, 0] = null;
+                professorCount--;
+                Console.WriteLine("Professor removed successfully.");
+                return;
+            }
         }
-
-        Console.WriteLine($"Professor ID: {professor.ProfessorID}, Name: {professor.Name}");
-        Console.Write("Are you sure you want to remove this professor? (Y/N): ");
-        char confirmRemove = char.ToUpper(Console.ReadKey().KeyChar);
-
-        if (confirmRemove != 'Y')
-        {
-            Console.WriteLine("Professor removal canceled.");
-            return;
-        }
-
-        professors.Remove(professor);
-        Console.WriteLine("Professor removed successfully.");
+        Console.WriteLine("Professor not found.");
     }
 }
 
@@ -264,7 +371,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        CollegeManagementSystem cms = new CollegeManagementSystem();
+        CollegeManagementSystem cms = new CollegeManagementSystem(100, 100); // Adjust as needed
         int choice = 0;
 
         do
@@ -278,13 +385,16 @@ class Program
             Console.WriteLine("5. View all students");
             Console.WriteLine("6. View all professors");
             Console.WriteLine("7. Enroll a student in a class");
-            Console.WriteLine("8. View students in a class");
-            Console.WriteLine("9. Exit the program");
+            Console.WriteLine("8. Enroll a professor in a class");
+            Console.WriteLine("9. View students in a class");
+            Console.WriteLine("10. View all classes");
+            Console.WriteLine("0. Exit the program");
             Console.Write("Enter your choice: ");
-            try { 
+            try
+            {
                 choice = Convert.ToInt32(Console.ReadLine());
             }
-            catch (FormatException) 
+            catch (FormatException)
             {
                 choice = 0;
                 Console.Clear();
@@ -301,15 +411,15 @@ class Program
                         int studentID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter student name: ");
                         string studentName = Console.ReadLine();
-                        cms.CheckStudentId(studentID, studentName, cms);
-                        //cms.AddStudent(studentID, studentName.ToLower());
+                        cms.CheckStudent(studentID, studentName.ToLower());
+                        
                         break;
                     case 2:
                         Console.Write("Enter professor ID: ");
                         int professorID = Convert.ToInt32(Console.ReadLine());
                         Console.Write("Enter professor name: ");
                         string professorName = Console.ReadLine();
-                        cms.AddProfessor(professorID, professorName.ToLower());
+                        cms.CheckProfessor(professorID, professorName.ToLower());
                         break;
                     case 3:
                         Console.Write("Enter student ID to remove: ");
@@ -336,18 +446,29 @@ class Program
                         cms.EnrollStudentInClass(enrollStudentID, className.ToLower());
                         break;
                     case 8:
+                        cms.ViewAllProfessors();
+                        Console.Write("Enter professor ID: ");
+                        int enrollProfessorID = Convert.ToInt32(Console.ReadLine());
+                        Console.Write("Enter class name to enroll: ");
+                        string classToEnroll = Console.ReadLine();
+                        cms.EnrollProfessorInClass(enrollProfessorID, classToEnroll.ToLower());
+                        break;
+                    case 9:
                         cms.ViewAllClasses();
                         Console.Write("Enter class name to view students: ");
                         string classToView = Console.ReadLine();
                         cms.ViewStudentsInClass(classToView.ToLower());
                         break;
-                    case 9:
+                    case 10:
+                        cms.ViewAllClasses();
+                        break;
+                    case 0:
                         Console.WriteLine("Are you sure you want to exit? (Y/N)");
                         char confirmExit = char.ToUpper(Console.ReadKey().KeyChar);
                         if (confirmExit == 'Y')
                         {
                             Console.WriteLine("Exiting program...");
-                            choice = 9;
+                            choice = 10;
                         }
                         else
                         {
@@ -368,15 +489,15 @@ class Program
             catch (IOException ex)
             {
                 Console.Clear();
-                Console.WriteLine("An error occurred: " + ex.Message);
+                Console.WriteLine("1An error occurred: " + ex.Message);
             }
             catch (Exception ex)
             {
                 Console.Clear();
-                Console.WriteLine("An error occurred: " + ex.Message);
+                Console.WriteLine("2An error occurred: " + ex.Message);
             }
 
-        } while (choice != 9);
+        } while (choice != 10);
 
     }
 }
