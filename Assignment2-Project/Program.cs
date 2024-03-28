@@ -74,6 +74,11 @@ public class Professor
         }
         throw new InvalidOperationException("Professor cannot teach more classes.");
     }
+
+    public override string ToString()
+    {
+        return $"ID: {ProfessorID}, Name: {Name}";
+    }
 }
 
 public class CollegeManagementSystem
@@ -267,7 +272,8 @@ public class CollegeManagementSystem
         {
             for (int i = 0; i < studentCount; i++)
             {
-                Console.WriteLine($"ID: {students[i, 0].StudentID}, Name: {students[i, 0].Name}");
+                //Console.WriteLine($"ID: {students[i, 0].StudentID}, Name: {students[i, 0].Name}");
+                Console.WriteLine($"{students[i, 0].ToString()}");
             }
         }
     }
@@ -285,7 +291,7 @@ public class CollegeManagementSystem
         {
             for (int i = 0; i < professorCount; i++)
             {
-                Console.WriteLine($"ID: {professors[i, 0].ProfessorID}, Name: {professors[i, 0].Name}");
+                Console.WriteLine($"{professors[i, 0].ToString()}");
             }
         }
     }
@@ -428,7 +434,7 @@ class Program
             }
             catch (FormatException)
             {
-                choice = -1;
+                choice =-2;
                 Console.Clear();
                 Console.WriteLine("Invalid input. Please enter a valid number.");
             }
@@ -464,7 +470,8 @@ class Program
                         cms.RemoveProfessor(removeProfessorID);
                         break;
                     case 5:
-                        cms.ViewAllStudents();
+                       cms.ViewAllStudents();
+                       
                         break;
                     case 6:
                         cms.ViewAllProfessors();
