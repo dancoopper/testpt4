@@ -35,6 +35,10 @@ public class Student
         }
         throw new InvalidOperationException("Student cannot enroll in more classes.");
     }
+    public override string ToString()
+    {
+        return $"ID: {StudentID}, Name: {Name}";
+    }
 }
 
 public class Professor
