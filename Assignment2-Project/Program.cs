@@ -214,6 +214,7 @@ public class CollegeManagementSystem
         if (classes.Count == 0)
         {
             Console.WriteLine("No classes found.");
+            return;
         }
         else
         {
@@ -310,7 +311,29 @@ public class CollegeManagementSystem
         Console.WriteLine("Student not found.");
     }
 
-  
+    public void RemoveProfessor(int professorID)
+    {
+        for (int i = 0; i < professorCount; i++)
+        {
+            if (professors[i, 0].ProfessorID == professorID)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    professors[i, 0].TeachesClasses[j] = null;
+                }
+                for (int k = i; k < professorCount - 1; k++)
+                {
+                    professors[k, 0] = professors[k + 1, 0];
+                }
+                professors[professorCount - 1, 0] = null;
+                professorCount--;
+                Console.WriteLine("Professor removed successfully.");
+                return;
+            }
+        }
+        Console.WriteLine("Professor not found.");
+    }
+
     public void CheckStudent(int studentID, string studentName)
     {
         
@@ -343,28 +366,33 @@ public class CollegeManagementSystem
         this.AddProfessor(professorID, professorName);
     }
 
-    public void RemoveProfessor(int professorID)
+    public bool ConfirmExit()
     {
-        for (int i = 0; i < professorCount; i++)
-        {
-            if (professors[i, 0].ProfessorID == professorID)
+        Console.WriteLine("Are you sure you want to exit? (Y/N)");
+        try { 
+            string confirmExit = Console.ReadLine();
+            confirmExit = confirmExit.ToUpper();
+            if (confirmExit == "Y")
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    professors[i, 0].TeachesClasses[j] = null;
-                }
-                for (int k = i; k < professorCount - 1; k++)
-                {
-                    professors[k, 0] = professors[k + 1, 0];
-                }
-                professors[professorCount - 1, 0] = null;
-                professorCount--;
-                Console.WriteLine("Professor removed successfully.");
-                return;
+                Console.WriteLine("Exiting program...");
+                
+                Environment.Exit(0);
             }
+            else if (confirmExit == "N")
+            {
+                Console.Clear();
+                Console.WriteLine("Continuing...");
+                
+            }
+            
         }
-        Console.WriteLine("Professor not found.");
+        catch (IOException ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
+        return false;
     }
+  
 }
 
 class Program
@@ -396,7 +424,7 @@ class Program
             }
             catch (FormatException)
             {
-                choice = 0;
+                choice = -1;
                 Console.Clear();
                 Console.WriteLine("Invalid input. Please enter a valid number.");
             }
@@ -463,17 +491,14 @@ class Program
                         cms.ViewAllClasses();
                         break;
                     case 0:
-                        Console.WriteLine("Are you sure you want to exit? (Y/N)");
-                        char confirmExit = char.ToUpper(Console.ReadKey().KeyChar);
-                        if (confirmExit == 'Y')
+                        //Console.WriteLine("Are you sure you want to exit? (Y/N)");
+                        //char confirmExit = char.ToUpper(Console.ReadKey().KeyChar);
+                        bool YN = cms.ConfirmExit();
+                        if (YN == false)
                         {
-                            Console.WriteLine("Exiting program...");
-                            choice = 10;
+                            continue;
                         }
-                        else
-                        {
-                            Console.WriteLine("Continuing...");
-                        }
+                       
                         break;
                     default:
                         //Console.WriteLine("Invalid choice. Please try again.");
@@ -497,7 +522,7 @@ class Program
                 Console.WriteLine("2An error occurred: " + ex.Message);
             }
 
-        } while (choice != 10);
+        } while (choice != -1);
 
     }
 }
