@@ -18,7 +18,6 @@ Code maintainability: As the code base grew, it became increasingly important to
 
 <Contributions> 
 We all helped each other throughout the whole project
-
 Samuel Browne: 33%
 Jonathan Cao: 33%
 Jeongmin Cho: 33%
