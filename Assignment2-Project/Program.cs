@@ -388,6 +388,30 @@ public class CollegeManagementSystem
         this.AddProfessor(professorID, professorName);
     }
 
+    public void RemoveClass(string className)
+    {
+        for (int i = 0; i < studentCount; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (students[i, 0].EnrolledClasses[j] == className)
+                {
+                    students[i, 0].EnrolledClasses[j] = null;
+                }
+            }
+        }
+
+        for (int i = 0; i < professorCount; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (professors[i, 0].TeachesClasses[j] == className)
+                {
+                    professors[i, 0].TeachesClasses[j] = null;
+                }
+            }
+        }
+    }
     public bool ConfirmExit() // makes code more readable and easier to understand
     {
         Console.WriteLine("Are you sure you want to exit? (Y/N)");
@@ -545,7 +569,6 @@ class Program
 
                         break;
                     default:
-                        //Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
             }
