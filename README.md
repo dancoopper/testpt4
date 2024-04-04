@@ -40,11 +40,3 @@ Once the program is compiled, follow these steps to run it:
 
 - You can adjust the maximum number of students and professors allowed in the system by modifying the arguments passed to the `CollegeManagementSystem` constructor in the `Main` method of `Program.cs`.
 - The program makes use of exception handling to gracefully handle errors that may occur during runtime.
-
-## Support
-
-For any issues or inquiries, please contact [author's email/website].
-
----
-
-Feel free to customize this README file further to include additional information or instructions specific to your use case.
