@@ -1,3 +1,19 @@
+/*
+ * Name:Samuel Browne
+ * ID:101481884
+ * CRN:46480
+ * 
+ * Name:Jonathan Cao
+ * ID:
+ * CRN:46480
+ * 
+ * 
+ * Name:Jeongmin Cho
+ * ID:
+ * CRN:46480
+ * 
+ */
+
 public class Student
 {
     public int StudentID { get; }
