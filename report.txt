@@ -1,0 +1,24 @@
+<The approach taken to solve the assignment requirements>
+
+Class structure: We created three classes, Student, Professor, and CollegeManagementSystem. The classes Student and Professor encapsulate properties and methods related to students and professors. The CollegeManagementSystemclass manages overall system operations, including adding/deleting students/professors, registering for classes, and displaying information.
+
+Data structure: We used a two-dimensional array to store students and professors participating in classes.
+
+Error handling: We implemented error handling using exceptions to ensure data integrity and prevent runtime errors. This includes checking for invalid inputs such as null, empty or whitespace strings, and ensuring that IDs are greater than zero.
+
+User interface: We developed a user-friendly console interface to interact with the system. The menu-driven approach allows users to easily perform various tasks.
+
+<Challenges encountered and how they were addressed>
+
+Data structure selection: It was important to determine the right data structure to store the students and professors participating in the classes. We chose a two-dimensional array to maintain simplicity and efficiency.
+
+Error handling: It was challenging to ensure error handling in case of unexpected inputs. To solve this problem, we implemented multiple catch blocks to handle different types of exceptions and provide informative error messages.
+
+Code maintainability: As the code base grew, it became increasingly important to maintain readability and organization. I addressed this by breaking functionality into separate methods and classes while sticking to the principles of encapsulation and modularization.
+
+<Contributions> 
+We all helped each other throughout the whole project
+
+Samuel Browne: 33%
+Jonathan Cao: 33%
+Jeongmin Cho: 33%
