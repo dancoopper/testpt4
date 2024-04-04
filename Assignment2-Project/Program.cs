@@ -9,7 +9,7 @@
  * 
  * 
  * Name:Jeongmin Cho
- * ID:
+ * ID:101470651
  * CRN:46480
  * 
  */
@@ -535,6 +535,7 @@ class Program
                         cms.CheckProfessor(professorID, professorName.ToLower());
                         break;
                     case 3:
+                        cms.ViewAllStudents();
                         Console.Write("Enter student ID to remove: ");
                         int removeStudentID = Convert.ToInt32(Console.ReadLine());
                         cms.RemoveStudent(removeStudentID);
